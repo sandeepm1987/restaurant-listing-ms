@@ -26,13 +26,13 @@ pipeline {
     }
 
     stage('SonarQube Analysis') {
-  steps {
+  /*steps {
     sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.host.url=http://35.180.137.8:9000/ -Dsonar.login=squ_32789bcdadb6e4337e432d6cbc100c2a1a14fde5'
-  }
+  }*/
 }
 
 
-   stage('Check code coverage') {
+   /*stage('Check code coverage') {
             steps {
                 script {
                     def token = "squ_32789bcdadb6e4337e432d6cbc100c2a1a14fde5"
@@ -57,14 +57,14 @@ pipeline {
                     }
                 }
             }
-        } 
+        }*/ 
 
 
       stage('Docker Build and Push') {
       steps {
           sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-          sh 'docker build -t codedecode25/restaurant-listing-service:${VERSION} .'
-          sh 'docker push codedecode25/restaurant-listing-service:${VERSION}'
+          sh 'docker build -t sms1987/restaurant-listing-service:${VERSION} .'
+          sh 'docker push sms1987/restaurant-listing-service:${VERSION}'
       }
     } 
 
@@ -80,10 +80,10 @@ pipeline {
 
     stage('Update Image Tag in GitOps') {
       steps {
-         checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[ credentialsId: 'git-ssh', url: 'git@github.com:udemy-dev-withK8s-AWS-codedecode/deployment-folder.git']])
+         checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[ credentialsId: 'git-ssh', url: 'git@github.com:sandeepm1987/deployment-folder.git']])
         script {
        sh '''
-          sed -i "s/image:.*/image: codedecode25\\/restaurant-listing-service:${VERSION}/" aws/restaurant-manifest.yml
+          sed -i "s/image:.*/image: sms1987\\/restaurant-listing-service:${VERSION}/" aws/restaurant-manifest.yml
         '''
           sh 'git checkout master'
           sh 'git add .'
